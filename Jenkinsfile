@@ -1,10 +1,9 @@
 #!groovy
 
 pipeline {
-  agent none // No usa un agente global, cada etapa define el suyo
-  
+  agent none
   stages {
-    stage('Maven Build and Package') {
+    stage('Maven Install') {
       agent {
         docker {
           image 'maven:3.9-eclipse-temurin-25' 
@@ -12,8 +11,22 @@ pipeline {
         }
       }
       steps {
-        // Aquí es donde Jenkins levanta el contenedor de Maven y ejecuta el comando con éxito
-        sh 'mvn clean package -DskipTests'
+        sh 'mvn clean install'
+      }
+    }
+    stage('Docker Build') {
+      agent any
+      steps {
+        sh 'docker build -t <docker-username>/spring-petclinic:gestion-udem-jenkins .'
+      }
+    }
+    stage('Docker Push') {
+      agent any
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
+          sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
+          sh 'docker push <docker-username>/spring-petclinic:gestion-udem-jenkins
+        }
       }
     }
   }
