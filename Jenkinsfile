@@ -11,22 +11,7 @@ pipeline {
         }
       }
       steps {
-        sh 'mvn clean package -DskipTests'
-      }
-    }
-    stage('Docker Build') {
-      agent any
-      steps {
-        sh 'docker build -t kevinmateog/spring-petclinic:gestion-udem-jenkins .'
-      }
-    }
-    stage('Docker Push') {
-      agent any
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerHub', passwordVariable: 'dockerHubPassword', usernameVariable: 'dockerHubUser')]) {
-          sh "docker login -u ${env.dockerHubUser} -p ${env.dockerHubPassword}"
-          sh 'docker push kevinmateog/spring-petclinic:gestion-udem-jenkins'
-        }
+        sh 'mvn clean install'
       }
     }
   }
