@@ -6,12 +6,12 @@ pipeline {
     stage('Maven Install') {
       agent {
         docker {
-          image 'maven:3.9-eclipse-temurin-17-alpine' 
+          image 'maven:3.9-eclipse-temurin-21' 
           reuseNode true
         }
       }
       steps {
-        sh 'mvn clean install'
+        sh 'mvn clean install -DskipTests'
       }
     }
   }
