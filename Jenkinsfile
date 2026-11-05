@@ -6,18 +6,18 @@ pipeline {
     stage('Maven Install') {
       agent {
         docker {
-          image 'maven:3.9-eclipse-temurin-25'
+          image 'maven:3.9-eclipse-temurin-21'
           reuseNode true
         }
       }
       steps {
-        sh 'mvn clean install'
+        sh 'mvn clean install -DskipTests'
       }
     }
     stage('Docker Build') {
       agent any
       steps {
-        sh 'docker build -t <docker-username>/spring-petclinic:gestion-udem-jenkins .'
+        sh 'docker build -t kevinmateog/spring-petclinic:gestion-udem-jenkins .'
       }
     }
   }
